@@ -35,7 +35,7 @@ def fn_softmax(input, params, hyper_params, backprop, dv_output=None):
             for j in range(num_nodes):
                 m[(j, j, i)] = output[(j, i)] * (1 - output[(j, i)])
 
-            dv_input[:, i] = m[:, :, i] @ dv_output[:, i]
+            dv_input[:, i] = np.matmul(m[:, :, i], dv_output[:, i])
 
     return (
      output, dv_input, grad)
