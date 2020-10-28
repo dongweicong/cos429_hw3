@@ -57,7 +57,7 @@ params = {
 #     "weight_decay": .0005,
     "learning_rate": .01,
     "weight_decay": .0005,
-    "batch_size": 128,
+    "batch_size": 300,
     "save_file": 'model.npz'
 }
 
@@ -123,4 +123,4 @@ for i in range(numIters):
     model = update_weights (model, sample_grads, update_params)
 
 np.savez("a_model.npz", **model)
-np.savez("a_model_max.npz", **max_model) 
+np.savez("a_model_max.npz", **max_model)
