@@ -116,7 +116,7 @@ for i in range(numIters):
             count +=1.0
     print("Epoch: ", i, " loss: ", loss[i], " The accuracy is: ", count/batch_size)
     if count/batch_size>0.97:
-        np.savez("b_model"+str(i)+".npz", **model)
+        np.savez("script1/model"+str(i)+".npz", **model)
 
 
 
