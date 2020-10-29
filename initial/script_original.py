@@ -64,7 +64,7 @@ params = {
 model = init_model(l, list(train_data[:,:,:,0].shape), 10, True)
 
 input = train_data
-numIters = 4000
+numIters = 2000
 label = train_label
 
 lr = params.get("learning_rate", .01)
@@ -129,7 +129,8 @@ for i in range(numIters):
 		# NOW TIME TO SAVE MODEL: if it's better then save it
 		if (maxmax <= testaccuracy[(i//25)]):
 			maxmax = testaccuracy[(i//25)]
-			np.savez("original/max_model.npz", **model)
+			np.savez("original/max_model2.npz", **model)
+			np.save("original/min_loss",loss)
 
 	sample_grads = calc_gradient(model, sample_input, sample_activations, dv_gradient)
 

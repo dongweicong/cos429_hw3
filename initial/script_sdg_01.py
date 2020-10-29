@@ -66,7 +66,7 @@ model = init_model(l, list(train_data[:,:,:,0].shape), 10, True)
 
 
 input = train_data
-numIters = 4000
+numIters = 2000
 rho = 0.9
 
 # model = np.load('potential_highacc_model_danlu323.npz', allow_pickle=True)
@@ -136,7 +136,8 @@ for i in range(numIters):
 		# NOW TIME TO SAVE MODEL: if it's better then save it
 		if (maxmax <= testaccuracy[(i//25)]):
 			maxmax = testaccuracy[(i//25)]
-			np.savez("sdg01/max_model.npz", **model)
+			np.savez("sdg01/max_model2.npz", **model)
+			np.save("sgd01/min_loss",loss)
 
 	sample_grads = calc_gradient(model, sample_input, sample_activations, dv_gradient)
 
