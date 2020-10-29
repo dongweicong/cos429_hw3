@@ -14,7 +14,6 @@ from train import train
 from pyc_update_weight import update_weights
 from init_model import init_model
 
-import cv2
 import sys
 sys.path += ['layers']
 # from loss_euclidean import loss_euclidean
@@ -23,29 +22,17 @@ from load_MNIST_images import load_MNIST_images
 from load_MNIST_labels import load_MNIST_labels
 from init_model import init_model
 
-# Load training data
-train_data = load_MNIST_images('train-images.idx3-ubyte')
-print (train_data.shape)
+# # Load training data
+# train_data = load_MNIST_images('train-images.idx3-ubyte')
+# print (train_data.shape)
 train_label = load_MNIST_labels('train-labels.idx1-ubyte')
-# Load testing data
-test_data = load_MNIST_images('t10k-images.idx3-ubyte')
+# # Load testing data
+# test_data = load_MNIST_images('t10k-images.idx3-ubyte')
 test_label = load_MNIST_labels('t10k-labels.idx1-ubyte')
 
+train_data=np.load("resized_train_data.npy")
+test_data=np.load("resized_test_data.npy")
 
-##############################resize#####################
-# resize training_data
-lens = train_data.shape[3]
-new_train_data = np.zeros((32,32,1,60000))
-for i in range (lens):
-	new_train_data[:,:,0,i] = cv2.resize(train_data[:,:,0,i], (32, 32))
-
-# resize testing_data
-lent = test_data.shape[3]
-new_test_data = np.zeros((32,32,1,test_data.shape[3]))
-for i in range (lent):
-	new_test_data[:,:,0,i] = cv2.resize(test_data[:,:,0,i], (32, 32))
-
-#############################################################
 
 
 l = [init_layers('conv', {'filter_size': 5,
@@ -75,11 +62,11 @@ params = {
 	"save_file": 'model.npz'
 }
 
-model = init_model(l, list(new_train_data[:,:,:,0].shape), 10, True)
+model = init_model(l, list(train_data[:,:,:,0].shape), 10, True)
 
 
-input = new_train_data
-numIters = 2
+input = train_data
+numIters = 4000
 rho = 0.9
 
 # model = np.load('potential_highacc_model_danlu323.npz', allow_pickle=True)
@@ -136,8 +123,8 @@ for i in range(numIters):
 	# NEW: TESTING AND SAVE EVERY 25 ITERATIONS
 	test_size=1000
 	if (i % 25 == 0):
-		test_num = np.random.randint(new_test_data.shape[-1], size=test_size)
-		sample_test_data = new_test_data[:,:,:,test_num]
+		test_num = np.random.randint(test_data.shape[-1], size=test_size)
+		sample_test_data = test_data[:,:,:,test_num]
 		sample_test_label = test_label[test_num]
 		test_output, activations = inference(model, sample_test_data)
 		count=0.0

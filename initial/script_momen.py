@@ -14,7 +14,6 @@ from train import train
 from pyc_update_weight import update_weights
 from init_model import init_model
 
-import cv2
 import sys
 sys.path += ['layers']
 # from loss_euclidean import loss_euclidean
@@ -23,17 +22,23 @@ from load_MNIST_images import load_MNIST_images
 from load_MNIST_labels import load_MNIST_labels
 from init_model import init_model
 
-# Load training data
-train_data = load_MNIST_images('train-images.idx3-ubyte')
-print (train_data.shape)
+# # Load training data
+# train_data = load_MNIST_images('train-images.idx3-ubyte')
+# print (train_data.shape)
 train_label = load_MNIST_labels('train-labels.idx1-ubyte')
-# Load testing data
-test_data = load_MNIST_images('t10k-images.idx3-ubyte')
+# # Load testing data
+# test_data = load_MNIST_images('t10k-images.idx3-ubyte')
 test_label = load_MNIST_labels('t10k-labels.idx1-ubyte')
+
+train_data=np.load("resized_train_data.npy")
+test_data=np.load("resized_test_data.npy")
+
+
+
 
 
 ##############################resize#####################
-# resize training_data
+
 # lens = train_data.shape[3]
 # new_train_data = np.zeros((32,32,1,60000))
 # for i in range (lens):
@@ -44,6 +49,9 @@ test_label = load_MNIST_labels('t10k-labels.idx1-ubyte')
 # new_test_data = np.zeros((32,32,1,test_data.shape[3]))
 # for i in range (lent):
 # 	new_test_data[:,:,0,i] = cv2.resize(test_data[:,:,0,i], (32, 32))
+#
+# np.save("resized_train_data",new_train_data)
+# np.save("resized_test_data",new_test_data)
 
 #############################################################
 
@@ -60,7 +68,7 @@ l = [init_layers('conv', {'filter_size': 5,
 						  'stride': 2}),
 	 init_layers('relu', {}),
 	 init_layers('flatten', {}),
-	 init_layers('linear', {'num_in': 256,
+	 init_layers('linear', {'num_in': 400,
 					'num_out': 120}),
 	init_layers('linear', {'num_in': 120,
 					'num_out': 84}),
@@ -157,9 +165,9 @@ for i in range(numIters):
 	num_layers = len(model['layers'])
 	for s in range(num_layers):
 		if (i == 0):
-			sample_grads[i]['W'] -= 0.0 * sample_grads[i]['W']
+			sample_grads[s]['W'] -= 0.0 * sample_grads[s]['W']
 		else:
-			sample_grads[i]['W'] -= lr* rho * sample_grads[i]['W']
+			sample_grads[s]['W'] -= lr* rho * sample_grads[s]['W']
 
 	model = update_weights (model, sample_grads, update_params)
 
