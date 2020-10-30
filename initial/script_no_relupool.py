@@ -105,7 +105,7 @@ for i in range(numIters):
 #   lr = lr_initial * np.exp(-np.log(2)/1500*i)
 	batch_num = np.random.randint(num_inputs, size=batch_size)
 	sample_input = input[:,:,:,batch_num]
-	print(sample_input.shape)
+	
 
 	sample_label = label[batch_num]
 	sample_output, sample_activations = inference(model, sample_input)

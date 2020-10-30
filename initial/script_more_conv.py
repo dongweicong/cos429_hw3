@@ -34,28 +34,6 @@ train_data=np.load("resized_train_data.npy")
 test_data=np.load("resized_test_data.npy")
 
 
-
-
-
-##############################resize#####################
-
-# lens = train_data.shape[3]
-# new_train_data = np.zeros((32,32,1,60000))
-# for i in range (lens):
-# 	new_train_data[:,:,0,i] = cv2.resize(train_data[:,:,0,i], (32, 32))
-#
-# # resize testing_data
-# lent = test_data.shape[3]
-# new_test_data = np.zeros((32,32,1,test_data.shape[3]))
-# for i in range (lent):
-# 	new_test_data[:,:,0,i] = cv2.resize(test_data[:,:,0,i], (32, 32))
-#
-# np.save("resized_train_data",new_train_data)
-# np.save("resized_test_data",new_test_data)
-
-#############################################################
-
-
 l = [init_layers('conv', {'filter_size': 5,
 						  'filter_depth': 1,
 						  'num_filters': 6}),
@@ -63,12 +41,15 @@ l = [init_layers('conv', {'filter_size': 5,
 						  'stride': 2}),
 	 init_layers('conv', {'filter_size': 5,
 						  'filter_depth': 6,
-						  'num_filters': 16}),
+						  'num_filters': 12}),
 	 init_layers('pool', {'filter_size': 2,
 						  'stride': 2}),
+	init_layers('conv', {'filter_size': 2,
+					  'filter_depth': 12,
+					  'num_filters': 18}),
 	 init_layers('relu', {}),
 	 init_layers('flatten', {}),
-	 init_layers('linear', {'num_in': 400,
+	 init_layers('linear', {'num_in': 288,
 					'num_out': 120}),
 	init_layers('linear', {'num_in': 120,
 					'num_out': 84}),
@@ -116,7 +97,7 @@ loss = np.zeros((numIters,))
 loss_test = np.zeros(((numIters//25)+1,))
 
 # This is the BATCH accuracy (WARNING: DO NOT DELETE)
-batch_accuracy = np.zeros(((numIters//25)+1,))
+batch_accuracy = np.zeros((numIters,))
 
 # This is saved for testing
 # (WARNING2: DO NOT DELETE, saved for plotting)
@@ -130,6 +111,7 @@ for i in range(numIters):
 #   lr = lr_initial * np.exp(-np.log(2)/1500*i)
 	batch_num = np.random.randint(num_inputs, size=batch_size)
 	sample_input = input[:,:,:,batch_num]
+
 
 	sample_label = label[batch_num]
 	sample_output, sample_activations = inference(model, sample_input)
@@ -148,7 +130,7 @@ for i in range(numIters):
 		sample_test_data = test_data[:,:,:,test_num]
 		sample_test_label = test_label[test_num]
 		test_output, activations = inference(model, sample_test_data)
-		loss_test[(i//25)], _ = loss_crossentropy(test_output, sample_test_label, {}, False)
+		loss_test[(i//25)], _ = loss_crossentropy(test_output, sample_test_label, {},False)
 		count=0.0
 		for k in range (test_size):
 			if (np.argmax(test_output[:,k]) == sample_test_label[k]):
@@ -158,8 +140,8 @@ for i in range(numIters):
 		# NOW TIME TO SAVE MODEL: if it's better then save it
 		if (maxmax <= testaccuracy[(i//25)]):
 			maxmax = testaccuracy[(i//25)]
-			np.savez("momen/max_model3.npz", **model)
-			np.save("momen/min_loss",loss)
+			np.savez("more_conv/max_model3.npz", **model)
+			np.save("more_conv/min_loss",loss)
 
 	sample_grads = calc_gradient(model, sample_input, sample_activations, dv_gradient)
 
@@ -173,7 +155,7 @@ for i in range(numIters):
 
 	model = update_weights (model, sample_grads, update_params)
 
-np.save("momen/test_loss_curve", loss)
-np.save("momen/train_loss_curve", loss)
-np.save("momen/batches_accuracys", batch_accuracy)
-np.save("momen/test_accuracy", testaccuracy)
+np.save("more_conv/loss_curve_test", loss_test)
+np.save("more_conv/loss_curve_train", loss)
+np.save("more_conv/batches_accuracys", batch_accuracy)
+np.save("more_conv/test_accuracy", testaccuracy)
