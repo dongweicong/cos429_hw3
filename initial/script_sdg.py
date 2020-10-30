@@ -93,6 +93,7 @@ num_inputs = input.shape[-1]
 
 # This is saved for plotting
 loss = np.zeros((numIters,))
+loss_test = np.zeros(((numIters//25)+1,))
 
 # This is the BATCH accuracy (WARNING: DO NOT DELETE)
 batch_accuracy = np.zeros((numIters,))
@@ -119,7 +120,7 @@ for i in range(numIters):
 		if (np.argmax(sample_output[:,j]) == sample_label[j]):
 			count +=1.0
 	batch_accuracy[i] = count/batch_size
-	print("Epoch: ", i, "loss: ", loss[i],"The batch accuracy is: ", batch_accuracy[i])
+	#print("Epoch: ", i, "loss: ", loss[i],"The batch accuracy is: ", batch_accuracy[i])
 
 	# NEW: TESTING AND SAVE EVERY 25 ITERATIONS
 	test_size=1000
@@ -128,23 +129,24 @@ for i in range(numIters):
 		sample_test_data = test_data[:,:,:,test_num]
 		sample_test_label = test_label[test_num]
 		test_output, activations = inference(model, sample_test_data)
+		loss_test[(i//25)], _ = loss_crossentropy(test_output, sample_test_label, {},False)
 		count=0.0
 		for k in range (test_size):
 			if (np.argmax(test_output[:,k]) == sample_test_label[k]):
 				count +=1.0
 		testaccuracy[(i//25)] = count/test_size
-		print("The test accuracy is: ", count/test_size)
+		print("Test loss is : ",loss_test[(i//25)],"The test accuracy is: ", count/test_size)
 		# NOW TIME TO SAVE MODEL: if it's better then save it
 		if (maxmax <= testaccuracy[(i//25)]):
 			maxmax = testaccuracy[(i//25)]
-			np.savez("sdg/max_model2.npz", **model)
+			np.savez("sdg/max_model3.npz", **model)
 			np.save("sdg/min_loss",loss)
 
 	sample_grads = calc_gradient(model, sample_input, sample_activations, dv_gradient)
 
 	model = update_weights (model, sample_grads, update_params)
 
-np.savez("sdg/final_model", **model)
-np.save("sdg/loss_curve", loss)
+np.save("sdg/test_loss_curve", loss_test)
+np.save("sdg/train_loss_curve", loss)
 np.save("sdg/batches_accuracys", batch_accuracy)
 np.save("sdg/test_accuracy", testaccuracy)
