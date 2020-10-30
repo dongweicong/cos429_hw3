@@ -116,7 +116,7 @@ loss = np.zeros((numIters,))
 loss_test = np.zeros(((numIters//25)+1,))
 
 # This is the BATCH accuracy (WARNING: DO NOT DELETE)
-batch_accuracy = np.zeros(((numIters//25)+1,))
+batch_accuracy = np.zeros((numIters,))
 
 # This is saved for testing
 # (WARNING2: DO NOT DELETE, saved for plotting)
